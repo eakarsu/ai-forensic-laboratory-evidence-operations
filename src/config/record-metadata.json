@@ -1,0 +1,612 @@
+{
+  "ForensicCase": {
+    "name": "ForensicCase",
+    "fields": [
+      {
+        "name": "name",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "caseNumber",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requestingAgency",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "caseOfficer",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "receivedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "disclosureDueAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      }
+    ]
+  },
+  "EvidenceItem": {
+    "name": "EvidenceItem",
+    "fields": [
+      {
+        "name": "name",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "itemNumber",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "description",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "sealNumber",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "receivedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "storageLocation",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "CustodyTransfer": {
+    "name": "CustodyTransfer",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "evidenceItemId",
+        "kind": "string",
+        "required": true,
+        "relation": "EvidenceItem"
+      },
+      {
+        "name": "transferredAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "fromCustodian",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "toCustodian",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "sealCondition",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "receipt",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "ExaminationRequest": {
+    "name": "ExaminationRequest",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "evidenceItemId",
+        "kind": "string",
+        "required": true,
+        "relation": "EvidenceItem"
+      },
+      {
+        "name": "discipline",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "question",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requestedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "priority",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "LabExamination": {
+    "name": "LabExamination",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "examinationRequestId",
+        "kind": "string",
+        "required": true,
+        "relation": "ExaminationRequest"
+      },
+      {
+        "name": "analyst",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "methodVersion",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "performedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "observations",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "InstrumentCheck": {
+    "name": "InstrumentCheck",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "instrument",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "serialNumber",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "checkedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "checkResult",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "evidence",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "TechnicalReview": {
+    "name": "TechnicalReview",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "labExaminationId",
+        "kind": "string",
+        "required": true,
+        "relation": "LabExamination"
+      },
+      {
+        "name": "reviewer",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "reviewedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "findings",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "resolution",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "DisclosurePacket": {
+    "name": "DisclosurePacket",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "preparedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "preparer",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "includedReferences",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "exclusions",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "recipient",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "EvidenceDisposition": {
+    "name": "EvidenceDisposition",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "evidenceItemId",
+        "kind": "string",
+        "required": true,
+        "relation": "EvidenceItem"
+      },
+      {
+        "name": "dispositionAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "authority",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "action",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "receipt",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "OperationalTask": {
+    "name": "OperationalTask",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "owner",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "priority",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "startAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "dueAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "done",
+        "kind": "boolean",
+        "required": true
+      },
+      {
+        "name": "notes",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "RuleVersion": {
+    "name": "RuleVersion",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "jurisdiction",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "version",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "effectiveAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "expiresAt",
+        "kind": "date",
+        "required": false
+      },
+      {
+        "name": "sourceUrl",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requirementText",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  },
+  "DocumentRequirement": {
+    "name": "DocumentRequirement",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "category",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requiredBy",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "sourceReference",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "evidenceReference",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "reviewNotes",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "forensicCaseId",
+        "kind": "string",
+        "required": true,
+        "relation": "ForensicCase"
+      }
+    ],
+    "parent": {
+      "entity": "ForensicCase",
+      "field": "forensicCaseId"
+    }
+  }
+}

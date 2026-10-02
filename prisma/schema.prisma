@@ -1,0 +1,364 @@
+// Generated schema — modeled after beautyhqio conventions.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  active       Boolean @default(true)
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(ANALYST)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  ANALYST
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actorName String?
+  action    String
+  entity    String
+  entityId  String?
+  detail    String?
+  createdAt DateTime @default(now())
+}
+
+model WorkflowAnalysis {
+ id String @id @default(cuid())
+ actorId String
+ workflow String
+ subjectEntity String
+ subjectId String
+ input Json
+ evidence Json
+ evidenceHash String
+ result Json
+ model String
+ receipt String?
+ createdAt DateTime @default(now())
+ @@index([workflow, createdAt])
+}
+model RecordReview {
+ id String @id @default(cuid())
+ actorId String
+ entity String
+ entityId String
+ version String
+ reason String
+ createdAt DateTime @default(now())
+ @@unique([entity, entityId, version, actorId])
+}
+model UsageBucket {
+ id String @id
+ calls Int
+}
+model IssuedCredential {
+ token String @id
+ entity String
+ entityId String
+ version String
+ assertion Json
+ createdAt DateTime @default(now())
+ revokedAt DateTime?
+ @@index([entity, entityId, createdAt])
+}
+
+model DomainArtifact {
+ id String @id @default(cuid())
+ subjectEntity String
+ subjectId String
+ title String
+ content String
+ contentHash String
+ actorId String
+ approvedBy String?
+ createdAt DateTime @default(now())
+ @@index([subjectEntity, subjectId])
+}
+
+model RecordApproval {
+ id String @id
+ version String
+}
+model DomainExecution {
+ id String @id
+ actorId String
+ connectorId String
+ action String
+ subjectEntity String
+ subjectId String
+ version String
+ status String
+ result Json?
+ createdAt DateTime @default(now())
+}
+
+model WorkSession {
+ id String @id @default(cuid())
+ actorId String
+ respondentId String
+ subjectEntity String
+ subjectId String
+ questions Json
+ answers Json
+ currentQuestion String?
+ status String
+ deadline DateTime
+ createdAt DateTime @default(now())
+ @@index([respondentId, createdAt])
+}
+model SessionMedia {
+ id String @id @default(cuid())
+ sessionId String
+ questionId String
+ actorId String
+ contentType String
+ bytes Bytes
+ contentHash String
+ createdAt DateTime @default(now())
+ @@index([sessionId])
+}
+
+model AppSetting {
+ id String @id
+ value Json
+ updatedAt DateTime @updatedAt
+}
+
+model ForensicCase {
+ id String @id @default(cuid())
+ name String
+ caseNumber String
+ requestingAgency String
+ caseOfficer String
+ receivedAt DateTime
+ disclosureDueAt DateTime
+ status String @default("Draft")
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ inverseEvidenceItem_forensicCaseId EvidenceItem[] @relation("EvidenceItem_forensicCaseId")
+ inverseCustodyTransfer_forensicCaseId CustodyTransfer[] @relation("CustodyTransfer_forensicCaseId")
+ inverseExaminationRequest_forensicCaseId ExaminationRequest[] @relation("ExaminationRequest_forensicCaseId")
+ inverseLabExamination_forensicCaseId LabExamination[] @relation("LabExamination_forensicCaseId")
+ inverseInstrumentCheck_forensicCaseId InstrumentCheck[] @relation("InstrumentCheck_forensicCaseId")
+ inverseTechnicalReview_forensicCaseId TechnicalReview[] @relation("TechnicalReview_forensicCaseId")
+ inverseDisclosurePacket_forensicCaseId DisclosurePacket[] @relation("DisclosurePacket_forensicCaseId")
+ inverseEvidenceDisposition_forensicCaseId EvidenceDisposition[] @relation("EvidenceDisposition_forensicCaseId")
+ inverseOperationalTask_forensicCaseId OperationalTask[] @relation("OperationalTask_forensicCaseId")
+ inverseRuleVersion_forensicCaseId RuleVersion[] @relation("RuleVersion_forensicCaseId")
+ inverseDocumentRequirement_forensicCaseId DocumentRequirement[] @relation("DocumentRequirement_forensicCaseId")
+}
+
+model EvidenceItem {
+ id String @id @default(cuid())
+ name String
+ itemNumber String
+ description String
+ sealNumber String
+ receivedAt DateTime
+ storageLocation String
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedForensicCaseId ForensicCase @relation("EvidenceItem_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+ inverseCustodyTransfer_evidenceItemId CustodyTransfer[] @relation("CustodyTransfer_evidenceItemId")
+ inverseExaminationRequest_evidenceItemId ExaminationRequest[] @relation("ExaminationRequest_evidenceItemId")
+ inverseEvidenceDisposition_evidenceItemId EvidenceDisposition[] @relation("EvidenceDisposition_evidenceItemId")
+}
+
+model CustodyTransfer {
+ id String @id @default(cuid())
+ title String
+ evidenceItemId String
+ transferredAt DateTime
+ fromCustodian String
+ toCustodian String
+ sealCondition String
+ receipt String
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedEvidenceItemId EvidenceItem @relation("CustodyTransfer_evidenceItemId", fields: [evidenceItemId], references: [id], onDelete: Restrict)
+ linkedForensicCaseId ForensicCase @relation("CustodyTransfer_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+}
+
+model ExaminationRequest {
+ id String @id @default(cuid())
+ title String
+ evidenceItemId String
+ discipline String
+ question String
+ requestedAt DateTime
+ priority String
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedEvidenceItemId EvidenceItem @relation("ExaminationRequest_evidenceItemId", fields: [evidenceItemId], references: [id], onDelete: Restrict)
+ linkedForensicCaseId ForensicCase @relation("ExaminationRequest_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+ inverseLabExamination_examinationRequestId LabExamination[] @relation("LabExamination_examinationRequestId")
+}
+
+model LabExamination {
+ id String @id @default(cuid())
+ title String
+ examinationRequestId String
+ analyst String
+ methodVersion String
+ performedAt DateTime
+ observations String
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedExaminationRequestId ExaminationRequest @relation("LabExamination_examinationRequestId", fields: [examinationRequestId], references: [id], onDelete: Restrict)
+ linkedForensicCaseId ForensicCase @relation("LabExamination_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+ inverseTechnicalReview_labExaminationId TechnicalReview[] @relation("TechnicalReview_labExaminationId")
+}
+
+model InstrumentCheck {
+ id String @id @default(cuid())
+ title String
+ instrument String
+ serialNumber String
+ checkedAt DateTime
+ checkResult String
+ evidence String
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedForensicCaseId ForensicCase @relation("InstrumentCheck_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+}
+
+model TechnicalReview {
+ id String @id @default(cuid())
+ title String
+ labExaminationId String
+ reviewer String
+ reviewedAt DateTime
+ findings String
+ resolution String
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedLabExaminationId LabExamination @relation("TechnicalReview_labExaminationId", fields: [labExaminationId], references: [id], onDelete: Restrict)
+ linkedForensicCaseId ForensicCase @relation("TechnicalReview_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+}
+
+model DisclosurePacket {
+ id String @id @default(cuid())
+ title String
+ preparedAt DateTime
+ preparer String
+ includedReferences String
+ exclusions String
+ recipient String
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedForensicCaseId ForensicCase @relation("DisclosurePacket_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+}
+
+model EvidenceDisposition {
+ id String @id @default(cuid())
+ title String
+ evidenceItemId String
+ dispositionAt DateTime
+ authority String
+ action String
+ receipt String
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedEvidenceItemId EvidenceItem @relation("EvidenceDisposition_evidenceItemId", fields: [evidenceItemId], references: [id], onDelete: Restrict)
+ linkedForensicCaseId ForensicCase @relation("EvidenceDisposition_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+}
+
+model OperationalTask {
+ id String @id @default(cuid())
+ title String
+ owner String
+ priority String
+ startAt DateTime
+ dueAt DateTime
+ done Boolean
+ notes String?
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedForensicCaseId ForensicCase @relation("OperationalTask_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+}
+
+model RuleVersion {
+ id String @id @default(cuid())
+ title String
+ jurisdiction String
+ version String
+ effectiveAt DateTime
+ expiresAt DateTime?
+ sourceUrl String
+ requirementText String
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedForensicCaseId ForensicCase @relation("RuleVersion_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+}
+
+model DocumentRequirement {
+ id String @id @default(cuid())
+ title String
+ category String
+ requiredBy DateTime
+ sourceReference String
+ evidenceReference String?
+ reviewNotes String?
+ status String @default("Draft")
+ forensicCaseId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([forensicCaseId])
+ linkedForensicCaseId ForensicCase @relation("DocumentRequirement_forensicCaseId", fields: [forensicCaseId], references: [id], onDelete: Restrict)
+}
